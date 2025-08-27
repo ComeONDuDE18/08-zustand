@@ -9,7 +9,11 @@ import type { NewNoteData, NoteTag } from "@/types/note";
 import { useNoteDraftStore } from "@/lib/store/noteStore";
 import { useState } from "react";
 
-export default function NoteForm() {
+interface NoteFormProps {
+  onClose?: () => void;
+}
+
+export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
@@ -25,13 +29,13 @@ export default function NoteForm() {
     setDraft({ [name]: value } as Partial<typeof draft>);
   };
 
-  
   const mutation = useMutation<unknown, unknown, NewNoteData>({
     mutationFn: createNote,
     onSuccess: () => {
       clearDraft();
       queryClient.invalidateQueries({ queryKey: ["notes"] });
-      router.push("/notes/filter/All");
+      if (onClose) onClose();
+      else router.push("/notes/filter/All");
     },
     onError() {
       setError({ form: "Failed to create note. Please try again." });
@@ -50,10 +54,10 @@ export default function NoteForm() {
     mutation.mutate(values);
   };
 
-
   const handleCancel = () => {
-  router.back();
-};
+    if (onClose) onClose();
+    else router.back();
+  };
 
 
   return (
