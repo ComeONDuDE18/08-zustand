@@ -29,7 +29,7 @@ export default function NoteForm({ onClose }: NoteFormProps) {
     setDraft({ [name]: value } as Partial<typeof draft>);
   };
 
-  const mutation = useMutation<unknown, unknown, NewNoteData>({
+  const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
       clearDraft();
