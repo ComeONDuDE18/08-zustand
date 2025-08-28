@@ -5,14 +5,13 @@ import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
+import Link from "next/link";
 
 
 import css from "./Notes.module.css";
 import NoteList from "@/components/NoteList/NoteList";
-import NoteForm from "@/components/NoteForm/NoteForm";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
-import Modal from "@/components/Modal/Modal";
 import type { FetchNotesResponse } from "@/lib/api";
 
 type NotesDetailsClientProps = {
@@ -25,7 +24,7 @@ type NotesDetailsClientProps = {
 export default function NotesDetailsClient({ initialData,tag }: NotesDetailsClientProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  
   const [debouncedSearchTerm] = useDebounce(search, 300);
 
   useEffect(() => {
@@ -60,13 +59,7 @@ const { data, isLoading, error, isSuccess } = useQuery<FetchNotesResponse>({
           />
         )}
 
-        <button
-          className={css.button}
-          type="button"
-          onClick={() => setModalIsOpen(true)}
-        >
-          Create note +
-        </button>
+       <Link className={css.button} href="/notes/action/create">Create +</Link>
       </header>
 
       {isSuccess && data.notes.length > 0 ? (
@@ -75,11 +68,7 @@ const { data, isLoading, error, isSuccess } = useQuery<FetchNotesResponse>({
         !isLoading && <p>No notes found</p>
       )}
 
-      {modalIsOpen && (
-        <Modal onClose={() => setModalIsOpen(false)}>
-          <NoteForm onClose={() => setModalIsOpen(false)} />
-        </Modal>
-      )}
+
     </div>
   );
 }

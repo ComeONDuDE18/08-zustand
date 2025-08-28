@@ -1,6 +1,5 @@
 "use client";
 
-
 import css from "../NoteForm/NoteForm.module.css";
 import { createNote } from "../../lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,14 +18,21 @@ export default function NoteForm({ onClose }: NoteFormProps) {
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
   const [error, setError] = useState<{ [key: string]: string }>({});
 
+  type DraftKey = keyof NewNoteData;
   const handleChange = (
     event:
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLTextAreaElement>
       | React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const { name, value } = event.target;
-    setDraft({ [name]: value } as Partial<typeof draft>);
+    const { name, value } = event.target as { name: DraftKey; value: string };
+
+    const nextDraft: NewNoteData = {
+      ...draft,
+      [name]: name === "tag" ? (value as NoteTag) : value,
+    } as NewNoteData;
+
+    setDraft(nextDraft);
   };
 
   const mutation = useMutation({
@@ -58,7 +64,6 @@ export default function NoteForm({ onClose }: NoteFormProps) {
     if (onClose) onClose();
     else router.back();
   };
-
 
   return (
     <form action={handleSubmit} className={css.form} noValidate>
@@ -113,11 +118,9 @@ export default function NoteForm({ onClose }: NoteFormProps) {
         <button type="submit" className={css.submitButton}>
           Create note
         </button>
-         <button
-                            type="button"
-                            onClick={handleCancel}
-                            className={css.cancelButton}
-                        >Cancel</button>
+        <button type="button" onClick={handleCancel} className={css.cancelButton}>
+          Cancel
+        </button>
       </div>
     </form>
   );

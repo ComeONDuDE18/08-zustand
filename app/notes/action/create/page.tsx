@@ -10,12 +10,12 @@ export const metadata: Metadata = {
     title: "Create note — NoteHub",
     description: "Quickly create a new note and keep your ideas organized.",
     url: "https://08-zustand-ten-kappa.vercel.app/notes/action/create",
-    images: { 
-        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+    images: [{
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg" ,
         width: 1200,
         height: 630,
-        alt: "NoteHub Create Note",
-       },
+        alt: "NoteHub Create Note"  
+        }],
     type: "article",
      }
 };

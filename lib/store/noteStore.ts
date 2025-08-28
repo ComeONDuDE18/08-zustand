@@ -1,24 +1,30 @@
-
+import { NewNoteData } from "@/types/note";
 import { create } from "zustand";
-import type { NewNoteData } from "@/types/note";
-
-const initialDraft: NewNoteData = {
-  title: "",
-  content: "",
-  tag: "Todo",
-};
+import { persist } from "zustand/middleware";
 
 type NoteDraftStore = {
-  draft: NewNoteData;
-  setDraft: (note: Partial<NewNoteData>) => void; // <-- Partial тут!
-  clearDraft: () => void;
+    draft: NewNoteData,
+    setDraft: (note: NewNoteData) => void,
+    clearDraft: () => void,
 };
 
-export const useNoteDraftStore = create<NoteDraftStore>((set) => ({
-  draft: initialDraft,
-  setDraft: (note) =>
-    set((state) => ({
-      draft: { ...state.draft, ...note }, // <-- зливає часткові дані
-    })),
-  clearDraft: () => set({ draft: initialDraft }),
-}));
+const initialDraft: NewNoteData = {
+    title: '',
+    content: '',
+    tag: 'Todo',
+};
+
+export const useNoteDraftStore = create<NoteDraftStore>()(
+	
+  persist(
+    (set) => ({
+      draft: initialDraft,
+      setDraft: (note) => set(() => ({ draft: note })),
+      clearDraft: () => set(() => ({ draft: initialDraft })),
+    }),
+    {
+      name: 'note-draft',
+      partialize: (state) => ({ draft: state.draft }),
+    },
+  ),
+);
